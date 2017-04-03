@@ -1,6 +1,7 @@
 module Main exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Selection
 -- import Html.Events exposing ( onClick )
 
 bufferWidth : number
@@ -72,13 +73,12 @@ styles = {
         ("background-color", "#ccc")
       , ("height", toPixel lineHeight)
       , ("position", "relative")
-      , ("color", "transparent")
     ]
   , text = style [
         ("z-index", "200")
       , ("position", "relative")
-      -- , ("color", "transparent")
-      -- , ("pointer-events", "none")
+      , ("color", "transparent")
+      , ("pointer-events", "none")
     ]
   }
 
@@ -93,7 +93,7 @@ view model =
       |> List.map (\line -> div [] [text line])
   in
     div [ styles.buffer ] [
-        pre [styles.text] [text model.content]
+        div [styles.text] content
         -- map each selection through the selection renderer
       , div [] <| List.map (renderSelection bufferLines) model.selections
     ]
@@ -106,7 +106,7 @@ renderSelection : List String -> Selection -> Html msg
 renderSelection bufferLines selection =
   let
     selectionLines = calculateSelectionLines bufferLines selection
-    top = lineHeight * ((Tuple.first selection.start) - 1)
+    top = lineHeight * (Tuple.first selection.start)
     position = [("top", toPixel top)]
     layout = List.concat [styles.selection, position]
   in
@@ -119,24 +119,10 @@ type alias SelectionLine = (Int, Int)
 calculateSelectionLines : List String -> Selection -> List SelectionLine
 calculateSelectionLines bufferLines selection =
   let
-    selectionLineRange = List.range (Tuple.first selection.start) (Tuple.first selection.end)
-      |> Debug.log "range"
+    selectionLineRange = List.range (Tuple.first selection.end) (Tuple.first selection.start)
     -- all lines except first start at 0, first one starts at first selection.start x coord
-    lineStarts = List.repeat (List.length selectionLineRange) 0
-      |> List.tail
-      |> Maybe.withDefault []
-      |> (::) (Tuple.second selection.start)
-      |> Debug.log "starts"
-    -- lineStarts = [2, 0, 0, 0]
-    lineEnds = bufferLines
-      |> List.map String.length
-      |> Debug.log "bufferLineLengths"
-      |> List.drop (Maybe.withDefault 0 (List.head selectionLineRange) + 1)
-      |> List.take ((List.length selectionLineRange) - 1)
-      |> List.reverse
-      |> (::) (Tuple.second selection.end)
-      |> List.reverse
-      |> Debug.log "ends"
+    lineStarts = [2, 0, 0, 0]
+    lineEnds = [10, 8, 9, 6] |> (Debug.log "ends")
   in
     -- determine if is single-line selection
     -- if single-line selection, calculate single selection line
