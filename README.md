@@ -1,5 +1,20 @@
-# elm-webpack-starter
+> Note: This is a complete Newb Elm Project. Brace yourselves.
+## Doggo
+The text editor that is all over the place.
+- Web-Based
+- Based around Multicursor support
+- JS functions for code transformations
+  - params: cursor, code, etc.
+- Free key bindings
+- HTML-based syntax highlighting
+- Elm-History based macros (like slo-mo videos)
+- Target Architecture: Elm Package to be used in
+  - Electron
+  - Web-IDE
+  - ???
 
+
+## Currently based on: elm-webpack-starter
 
 ### About:
 A simple Webpack setup for writing [Elm](http://elm-lang.org/) apps:

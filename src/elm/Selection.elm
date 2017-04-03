@@ -6,6 +6,7 @@ lineHeight : number
 lineHeight = 60
 
 
+-- start / end = (line, column)
 type alias Selection =
   {
       start : (Int, Int)

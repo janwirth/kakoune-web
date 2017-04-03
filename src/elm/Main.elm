@@ -68,8 +68,6 @@ view model =
   let
     bufferLines = model.content
       |> String.split "\n"
-    content = bufferLines
-      |> List.map (\line -> div [] [text line])
   in
     div [ styles.buffer ] [
         pre [styles.text] [text model.content]
