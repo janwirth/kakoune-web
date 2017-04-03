@@ -120,23 +120,18 @@ calculateSelectionLines : List String -> Selection -> List SelectionLine
 calculateSelectionLines bufferLines selection =
   let
     selectionLineRange = List.range (Tuple.first selection.start) (Tuple.first selection.end)
-      |> Debug.log "range"
     -- all lines except first start at 0, first one starts at first selection.start x coord
     lineStarts = List.repeat (List.length selectionLineRange) 0
       |> List.tail
       |> Maybe.withDefault []
       |> (::) (Tuple.second selection.start)
-      |> Debug.log "starts"
-    -- lineStarts = [2, 0, 0, 0]
     lineEnds = bufferLines
       |> List.map String.length
-      |> Debug.log "bufferLineLengths"
       |> List.drop (Maybe.withDefault 0 (List.head selectionLineRange) + 1)
       |> List.take ((List.length selectionLineRange) - 1)
       |> List.reverse
       |> (::) (Tuple.second selection.end)
       |> List.reverse
-      |> Debug.log "ends"
   in
     -- determine if is single-line selection
     -- if single-line selection, calculate single selection line
@@ -145,8 +140,6 @@ calculateSelectionLines bufferLines selection =
     else
       -- else calculate array of lines
       List.map2 (\start end -> (start, end)) lineStarts lineEnds
-
-
 
 renderSelectionLine : SelectionLine -> Html msg
 renderSelectionLine selectionLine =
