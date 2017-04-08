@@ -1,4 +1,7 @@
-> Note: This is a complete Newb Elm Project. Brace yourselves.
+# Kakoune-web
+
+This is the subscriptions branch. I am still a elm-toddler but I want to rule the world. Nao. So I create a branch to play around with subscriptions. 
+
 ## Doggo
 The text editor that is all over the place.
 - Web-Based
