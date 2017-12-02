@@ -36,22 +36,23 @@ socket.onclose = function(event) {
     console.info('close code : ' + event.code + ' reason: ' + event.reason);
 };
 
+const hello = () => ({ "jsonrpc": "2.0", "method": "keys", "params": ["iHello<esc>"] })
+const bye = () => ({ "jsonrpc": "2.0", "method": "keys", "params": [":q<ret>"] })
+
+
 //usage
 //after connect
 socket.onopen = function(){
 
     //calls
-    jrpc.call('add', [2, 3]).then(function (result) {
-        document.getElementsByClassName('paragraph')[0].innerHTML += 'add(2, 3) result: ' + result + '<br>';
-    });
+    setTimeout(() => {
+      console.log('calling keypress')
+      jrpc.call('ui.keys', [hello()])
+    }, 500)
 
-    jrpc.call('mul', {y: 3, x: 2}).then(function (result) {
-        document.getElementsByClassName('paragraph')[0].innerHTML += 'mul(2, 3) result: ' + result + '<br>';
-    });
-
-    jrpc.batch([
-        {call:{method: "add", params: [5,2]}},
-        {call:{method: "mul", params: [100, 200]}},
-        {call:{method: "create", params: {item: {foo: "bar"}, rewrite: true}}}
-    ]);
+    setTimeout(() => {
+      console.log('calling keypress')
+      jrpc.call('ui.keys', [bye()])
+    }, 1000)
+    
 };
