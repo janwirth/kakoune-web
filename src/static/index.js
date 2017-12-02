@@ -1,9 +1,10 @@
 // pull in desired CSS/SASS files
 require( './styles/main.scss' );
+import S from 'sanctuary'
 
 // inject bundled Elm app into div#main
 var Elm = require( '../elm/Main' );
-Elm.Main.embed( document.getElementById( 'main' ) );
+const app = Elm.Main.embed( document.getElementById( 'main' ) );
 
 
 var JsonRPC = require('simple-jsonrpc-js');
@@ -12,8 +13,18 @@ var JsonRPC = require('simple-jsonrpc-js');
 var jrpc = new JsonRPC();
 var socket = new WebSocket("ws://localhost:8090");
 
+
 //wait of call
-jrpc.on('ui.update', u => console.log(u))
+jrpc.on('ui.update', updates => {
+  S.pipe([
+    S.filter( update => update.method === 'draw' ),
+    S.map( update => {
+      console.log(update.params[0])
+      app.ports.draw.send(update.params[0][0])
+    } )
+  ])(updates)
+})
+window.app = app
 
 socket.onmessage = function(event) {
     jrpc.messageHandler(event.data);
@@ -48,11 +59,11 @@ socket.onopen = function(){
     setTimeout(() => {
       console.log('calling keypress')
       jrpc.call('ui.keys', [hello()])
-    }, 500)
+    }, 1000)
 
     setTimeout(() => {
       console.log('calling keypress')
       jrpc.call('ui.keys', [bye()])
-    }, 1000)
+    }, 2000)
     
 };
