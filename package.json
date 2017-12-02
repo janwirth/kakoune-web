@@ -10,6 +10,7 @@
   },
   "scripts": {
     "start": "webpack-dev-server --hot --inline",
+    "start-server": "node start-server",
     "prebuild": "rimraf dist",
     "build": "webpack",
     "reinstall": "npm i rimraf && rimraf node_modules && npm uninstall -g elm && npm i -g elm && npm i && elm package install"
@@ -36,6 +37,7 @@
     "webpack-merge": "^4.1.1"
   },
   "dependencies": {
+    "sanctuary": "^0.13.2",
     "simple-jsonrpc-js": "^0.0.10",
     "ws": "^3.3.2"
   }

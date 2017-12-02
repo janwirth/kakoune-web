@@ -1,55 +1,65 @@
 const { spawn } = require('child_process');
+const S = require('sanctuary')
 var WebSocketServer = new require('ws');
 var JsonRPC = require('simple-jsonrpc-js');
 
 
 const hello = () => ({ "jsonrpc": "2.0", "method": "keys", "params": ["iHello<esc>"] })
+const bye = () => ({ "jsonrpc": "2.0", "method": "keys", "params": [":q<ret>"] })
 
 startServer()
 
-// startKak : ( KakUpdate -> a ) -> tell 
-function startKak (onData) {
+Buffer$prototype$toString = function(){
+  return 'new Buffer(' + toString(Array.from(this)) + ')';
+};
+
+// startKak : ( List KakUpdate -> a ) -> tell
+function startKak (onData, onClose) {
   const kak = spawn('kak', ['-ui', 'json'])
-  kak.stderr.on('data', data => onData(data.toString()) )
-  kak.stdout.on('data', data => onData(data.toString()) )
+  const handleData = data => {
+    const res = S.pipe([
+      S.splitOn('\n'), // split into kak msg lines
+      S.map(S.parseJson(S.is(Object))), // parse messages
+      S.filter(S.isJust), // filter out empty last line
+      S.map(S.fromMaybe({})), // only valid values
+      S.toString // convert back to JSON
+    ])(data.toString()) // convert buffer to string; Sanctuary does not like Buffers https://github.com/sanctuary-js/sanctuary-type-classes/issues/31
+    onData(res)
+  }
+  // kak.stderr.on('data', data => onData(data.toString().split('\n')) )
+  kak.stdout.on('data', handleData )
+  kak.on('close', onClose)
 
   // tell : KakKeystrokes -> SideEffect@Kak
   const tell = message => kak.stdin.write(JSON.stringify(message))
   return tell
 }
 
+function startEditor() {
+  const onMsg = data => {
+    console.log('NEW MESSAGE')
+    console.log(data) 
+  }
+  const onClose = code => {
+    console.log('editor closed with code ', code)
+  }
+  const tellKak = startKak( onMsg, onClose )
+  setTimeout( () => tellKak(hello()), 1000 )
+  setTimeout( () => tellKak(bye()), 3000 )
+}
+
 // startServer : () -> SideEffect@Server
 function startServer () {
-  const tellKak = startKak( data => console.log(data) )
-  setTimeout( () => tellKak(hello()), 1000 )
+  const host = '0.0.0.0'
+  const port = '8090'
+  const server = new WebSocketServer.Server({ host, port })
+  server.on('connection', socket => {
+    startEditor()
+  })
 }
+
+
 /*
-const kak = spawn('kak', ['-ui', 'json']);
-startServer()
-
-function startKak (callback) {
-
-  kak.stdout.on('data', (data) => {
-    console.log(`stdout: ${data}`);
-    setTimeout(hello, 1000)
-    
-  });
-
-  kak.stderr.on('data', (data) => {
-    console.log(`stderr: ${data}`);
-  });
-
-  kak.on('close', (code) => {
-    console.log(`child process exited with code ${code}`);
-  });
-
-  // TELL
-  const tell = sth => kak.stdin.write(JSON.stringify(sth))
-  // LISTEN
-  kak.stdout.on('data', callback)
-
-  return tell
-}
 
 function startServer () {
   function add(x, y){
