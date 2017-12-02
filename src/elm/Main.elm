@@ -2,7 +2,9 @@ module Main exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing ( onClick )
-import Kakoune exposing ( draw, DrawParams )
+import Kakoune exposing ( draw, DrawParams, keydown )
+import Keyboard
+import Char
 
 -- component import example
 import Components.Hello exposing ( hello )
@@ -19,19 +21,32 @@ main = Html.program {
 
 
 -- MODEL
-type alias Model = List DrawParams
+type alias Model = {
+  draws : List DrawParams,
+  presses : List Char
+}
 
 model : Model
-model = []
+model = {
+    draws = [],
+    presses = []
+  }
 
 
 -- UPDATE
-type Msg = Draw DrawParams
+type Msg = Draw DrawParams | KeyPress Keyboard.KeyCode
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
-    Draw params -> (model ++ [ params ], Cmd.none)
+    Draw params -> (
+      { model | draws = model.draws ++ [ params ] },
+      Cmd.none
+    )
+    KeyPress code -> (
+      { model | presses = model.presses ++ [ Char.fromCode code ] },
+      Cmd.none
+    )
 
 
 -- VIEW
@@ -51,7 +66,7 @@ styles =
   }
 
 
-
 subscriptions init = Sub.batch [
-    draw Draw
+    draw Draw,
+    Keyboard.downs KeyPress
   ]

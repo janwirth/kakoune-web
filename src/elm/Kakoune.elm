@@ -1,10 +1,12 @@
-port module Kakoune exposing ( draw, DrawParams )
+port module Kakoune exposing ( draw, DrawParams, keydown )
 
 port draw : (DrawParams -> msg) -> Sub msg
 port menu_hide : (MenuHideParams -> msg) -> Sub msg
 port info_hide : (InfoHideParams -> msg) -> Sub msg
 port draw_status : (DrawStatusParams -> msg) -> Sub msg
 port refresh : (RefreshParams -> msg) -> Sub msg
+
+port keydown : String -> Cmd msg
 
 menuHide = menu_hide
 infoHide = info_hide
