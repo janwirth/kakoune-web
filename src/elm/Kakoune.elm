@@ -1,4 +1,4 @@
-port module Kakoune exposing ( draw, DrawParams, keydown )
+port module Kakoune exposing ( draw, DrawParams, keydown, Atom )
 
 port draw : (DrawParams -> msg) -> Sub msg
 port menu_hide : (MenuHideParams -> msg) -> Sub msg
