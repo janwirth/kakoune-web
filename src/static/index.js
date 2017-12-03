@@ -55,7 +55,6 @@ const keys = str => ({ "jsonrpc": "2.0", "method": "keys", "params": [str] })
 
 
 const handleKeyDown = str => {
-  console.log(str)
   jrpc.call('ui.keys', [keys(str)])
 }
 //usage

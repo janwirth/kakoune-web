@@ -6,6 +6,7 @@ import Char
 import View exposing ( view )
 import Msg exposing ( Msg(..) )
 import Model exposing ( Model, model )
+import Debug exposing ( log )
 
 -- component import example
 import Components.Hello exposing ( hello )
@@ -21,7 +22,13 @@ main = Html.program {
   }
 
 mapKey : Keyboard.KeyCode -> String
-mapKey code = "iWorld<esc>"
+mapKey code =
+  let
+    c = (log "pressed" code)
+  in
+    "iWorld<esc>"
+
+
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
