@@ -20,7 +20,8 @@ main = Html.program {
     subscriptions = subscriptions
   }
 
-
+mapKey : Keyboard.KeyCode -> String
+mapKey code = "iWorld<esc>"
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -29,10 +30,7 @@ update msg model =
       { model | atoms = params },
       Cmd.none
     )
-    KeyPress code -> (
-      { model | presses = model.presses ++ [ Char.fromCode code ] },
-      Cmd.none
-    )
+    KeyPress code -> ( model, keydown ( mapKey code) )
 
 subscriptions : a -> Sub Msg
 subscriptions init = Sub.batch [

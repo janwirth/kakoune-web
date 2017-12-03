@@ -26,3 +26,4 @@ type alias Atom = {
     },
     contents : String
   }
+

@@ -14,6 +14,7 @@ var jrpc = new JsonRPC();
 var socket = new WebSocket("ws://localhost:8090");
 
 
+
 //wait of call
 jrpc.on('ui.update', updates => {
   S.pipe([
@@ -39,6 +40,7 @@ socket.onerror = function(error) {
 };
 
 socket.onclose = function(event) {
+    app.ports.keydown.unsubscribe( handleKeyDown )
     if (event.wasClean) {
         console.info('Connection close was clean');
     } else {
@@ -49,21 +51,21 @@ socket.onclose = function(event) {
 
 const hello = () => ({ "jsonrpc": "2.0", "method": "keys", "params": ["iHello<esc>"] })
 const bye = () => ({ "jsonrpc": "2.0", "method": "keys", "params": [":q<ret>"] })
+const keys = str => ({ "jsonrpc": "2.0", "method": "keys", "params": [str] })
 
 
+const handleKeyDown = str => {
+  console.log(str)
+  jrpc.call('ui.keys', [keys(str)])
+}
 //usage
 //after connect
 socket.onopen = function(){
-
-    //calls
-    setTimeout(() => {
-      console.log('calling keypress')
-      jrpc.call('ui.keys', [hello()])
-    }, 1000)
+    app.ports.keydown.subscribe( handleKeyDown )
 
     setTimeout(() => {
       console.log('calling keypress')
       jrpc.call('ui.keys', [bye()])
-    }, 2000)
+    }, 7000)
     
 };
