@@ -49,22 +49,14 @@ socket.onclose = function(event) {
     console.info('close code : ' + event.code + ' reason: ' + event.reason);
 };
 
-const hello = () => ({ "jsonrpc": "2.0", "method": "keys", "params": ["iHello<esc>"] })
-const bye = () => ({ "jsonrpc": "2.0", "method": "keys", "params": [":q<ret>"] })
 const keys = str => ({ "jsonrpc": "2.0", "method": "keys", "params": [str] })
 
 
 const handleKeyDown = str => {
+  console.log(str)
   jrpc.call('ui.keys', [keys(str)])
 }
-//usage
-//after connect
-socket.onopen = function(){
-    app.ports.keydown.subscribe( handleKeyDown )
 
-    setTimeout(() => {
-      console.log('calling keypress')
-      jrpc.call('ui.keys', [bye()])
-    }, 7000)
-    
-};
+// usage
+// after connect
+socket.onopen = () => app.ports.keydown.subscribe( handleKeyDown )
