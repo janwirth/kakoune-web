@@ -30,12 +30,18 @@ getFg name =
 -- Html is defined as: elem [ attribs ][ children ]
 -- CSS can be applied via class names or inline style attrib
 view : Model -> Html Msg
-view model = body [ style [("background", "#111"), ("height", "100vh")] ] [
-    div [ monospace ] (List.map renderAtom model.atoms)
+view model = body [ style [("background", "#111"), ("height", "100vh"), monospace] ] [
+      renderBuffer model
+    , div [  ] (List.map renderAtom model.status)
   ]
 
-monospace : Attribute msg
-monospace = style [("font-family", "monospace")]
+atBottom = style [("position", "fixed"), ("bottom", "0")]
+
+renderBuffer model = div [] (List.map renderLine model.buffer)
+renderLine line = div [] (List.map renderAtom line)
+
+monospace : ( String, String )
+monospace = ("font-family", "monospace")
 
 renderAtom : Atom -> Html Msg
 renderAtom atom = span [ atomStyle atom ] [ text atom.contents ]

@@ -4,13 +4,15 @@ import Kakoune exposing ( DrawParams )
 
 -- MODEL
 type alias Model = {
-  atoms : DrawParams,
+  buffer : List DrawParams,
+  status : DrawParams,
   presses : List Char
 }
 
 model : Model
 model = {
-    atoms = [],
+    buffer = [],
+    status = [],
     presses = []
   }
 

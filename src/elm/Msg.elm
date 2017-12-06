@@ -1,7 +1,9 @@
 module Msg exposing ( Msg(..) )
-import Kakoune exposing ( draw, DrawParams, keydown )
+import Kakoune exposing ( DrawParams, keydown )
 import Keyboard
 
 -- UPDATE
-type Msg = Draw DrawParams | KeyPress Keyboard.KeyCode
+type Msg = DrawBuffer (List DrawParams)
+         | DrawStatus DrawParams
+         | KeyPress Keyboard.KeyCode
 

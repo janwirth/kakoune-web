@@ -14,17 +14,20 @@ var jrpc = new JsonRPC();
 var socket = new WebSocket("ws://localhost:8090");
 
 
+document.addEventListener('keydown', e => {
+  if (e.keyCode === 8) { // prevent backspace from navigating away..
+    e.preventDefault()
+  }
+})
 
 //wait of call
-jrpc.on('ui.update', updates => {
-  S.pipe([
-    S.filter( update => update.method === 'draw' ),
-    S.map( update => {
-      console.log(update.params[0])
-      app.ports.draw.send(update.params[0][0])
-    } )
-  ])(updates)
-})
+jrpc.on('ui.update', S.pipe([
+  // S.filter( update => update.method === 'draw' ),
+  S.map( update => {
+    console.log(update.method, update.params[0])
+    app.ports[update.method].send(update.params[0])
+  } )
+]))
 window.app = app
 
 socket.onmessage = function(event) {
