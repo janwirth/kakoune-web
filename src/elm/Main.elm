@@ -5,7 +5,7 @@ import Keyboard
 import View exposing ( view )
 import Msg exposing ( Msg(..) )
 import Model exposing ( Model, model )
-import Keys exposing ( mapKey )
+import Keys exposing ( .. )
 import Debug exposing ( log )
 
 
@@ -20,20 +20,43 @@ main = Html.program {
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
-  case msg of
-    DrawStatus params -> (
-      { model | status = params },
-      Cmd.none
-    )
-    DrawBuffer params -> (
-      { model | buffer = params },
-      Cmd.none
-    )
-    KeyPress code -> ( model, keydown <| log (toString code) ( mapKey code ) )
+  let
+    noop = ( model, Cmd.none )
+  in
+    case msg of
+      DrawStatus params -> (
+        { model | status = params },
+        Cmd.none
+      )
+      DrawBuffer params -> (
+        { model | buffer = params },
+        Cmd.none
+      )
+      KeyPress code ->
+        case mapKey code of
+          Nothing -> noop
+          Just key -> case key of
+            Normal str -> ( model, keydown str )
+            Mod modifier -> ( setMod True model modifier, Cmd.none )
+      KeyRelease code ->
+        case mapKey code of
+          Nothing -> noop
+          Just key -> case key of
+            Normal str -> noop
+            Mod modifier -> ( setMod False model modifier, Cmd.none )
+
+setMod active model modifier =
+  let
+    mods = model.modifiers
+  in
+    case modifier of
+      Shift -> { model | modifiers = { mods | shift = active } }
+      Ctrl -> { model | modifiers = { mods | ctrl = active } }
 
 subscriptions : a -> Sub Msg
 subscriptions init = Sub.batch [
     drawBuffer DrawBuffer,
     drawStatus DrawStatus,
-    Keyboard.downs KeyPress
+    Keyboard.downs KeyPress,
+    Keyboard.ups KeyRelease
   ]

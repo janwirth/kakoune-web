@@ -6,13 +6,21 @@ import Kakoune exposing ( DrawParams )
 type alias Model = {
   buffer : List DrawParams,
   status : DrawParams,
-  presses : List Char
+  presses : List Char,
+  modifiers : {
+      shift : Bool,
+      ctrl : Bool
+  }
 }
 
 model : Model
 model = {
     buffer = [],
     status = [],
-    presses = []
+    presses = [],
+    modifiers = {
+        shift = False
+      , ctrl = False
+    }
   }
 

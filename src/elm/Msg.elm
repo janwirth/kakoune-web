@@ -6,4 +6,5 @@ import Keyboard
 type Msg = DrawBuffer (List DrawParams)
          | DrawStatus DrawParams
          | KeyPress Keyboard.KeyCode
+         | KeyRelease Keyboard.KeyCode
 
